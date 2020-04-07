@@ -6,7 +6,7 @@ node {
     def rtMaven = Artifactory.newMavenBuild()
     def buildInfo
     
- rtMaven.tool = "maven"
+ rtMaven.tool = "Maven3.3.9"
 
     stage('Clone sources') {
         git url: 'https://github.com/piyushprashar/WebApp.git'
@@ -14,7 +14,7 @@ node {
 
     stage('Artifactory configuration') {
         // Tool name from Jenkins configuration
-        rtMaven.tool = "maven"
+        rtMaven.tool = "Maven3.3.9"
         // Set Artifactory repositories for dependencies resolution and artifacts deployment.
         rtMaven.deployer releaseRepo:'libs-release-local', snapshotRepo:'libs-snapshot-local', server: server
         rtMaven.resolver releaseRepo:'libs-release', snapshotRepo:'libs-snapshot', server: server
