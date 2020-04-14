@@ -12,20 +12,22 @@ node {
         git url: 'https://github.com/piyushprashar/WebApp.git'
     }
 
-    stage('Artifactory configuration') {
-        // Tool name from Jenkins configuration
-        rtMaven.tool = "Maven"
-        // Set Artifactory repositories for dependencies resolution and artifacts deployment.
-        rtMaven.deployer releaseRepo:'libs-release-local', snapshotRepo:'libs-snapshot-local', server: server
-        rtMaven.resolver releaseRepo:'libs-release', snapshotRepo:'libs-snapshot', server: server
+    stage('SonarQube analysis') { 
+        withSonarQubeEnv('Sonar') { 
+          sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.3.0.603:sonar ' + 
+          '-f pom.xml ' +
+	  '-Dsonarl.url=http://35.245.160.34:9000 ' +
+          '-Dsonar.projectKey=com.huettermann:all:master ' +
+          '-Dsonar.login=admin' +
+          '-Dsonar.password=admin' +
+          ' -Dsonar.language=java ' +
+          '-Dsonar.sources=. ' +
+          '-Dsonar.tests=. ' +
+          '-Dsonar.test.inclusions=**/*Test*/** ' +
+          '-Dsonar.exclusions=**/*Test*/**'
+        }
     }
 
-    stage('Maven build') {
-        buildInfo = rtMaven.run pom: 'pom.xml', goals: 'clean install'
-    }
-
-    stage('Publish build info') {
-        server.publishBuildInfo buildInfo
-    }
+   
     }
 	 
